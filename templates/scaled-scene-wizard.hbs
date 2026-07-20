@@ -1,0 +1,61 @@
+{{!-- HandlebarsApplicationMixin requires each part to render exactly one root
+      element, so everything below stays inside this wrapper. --}}
+<div class="bss-wizard-body">
+
+<div class="bss-wizard-intro">
+  <p>{{localize "S187BSS.Wizard.Intro"}}</p>
+</div>
+
+{{#unless isConvert}}
+<div class="form-group">
+  <label>{{localize "S187BSS.Wizard.Name"}}</label>
+  <div class="form-fields">
+    <input type="text" name="name" value="{{sceneName}}"
+           placeholder="{{localize 'S187BSS.Wizard.DefaultName'}}" autofocus>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>{{localize "S187BSS.Wizard.Background"}}</label>
+  <div class="form-fields">
+    <input type="text" name="background" placeholder="{{localize 'S187BSS.Wizard.BackgroundPlaceholder'}}">
+  </div>
+  <p class="hint">{{localize "S187BSS.Wizard.BackgroundHint"}}</p>
+</div>
+{{/unless}}
+
+<div class="form-group">
+  <label>{{localize "S187BSS.Wizard.Profile"}}</label>
+  <div class="form-fields">
+    <select name="profileId">
+      {{#each profiles as |profile|}}
+      <option value="{{profile.id}}">{{profile.label}} (&times;{{profile.multiplier}})</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>{{localize "S187BSS.Wizard.GridSize"}}</label>
+  <div class="form-fields">
+    <input type="number" name="gridSize" value="{{gridSize}}" min="10" step="1">
+  </div>
+  <p class="hint">{{localize "S187BSS.Wizard.GridSizeHint"}}</p>
+</div>
+
+<div class="bss-derived" data-derived-distance></div>
+
+{{#if isConvert}}
+<p class="notification warning bss-convert-warning">
+  {{localize "S187BSS.Wizard.ConvertWarning"}}
+</p>
+{{/if}}
+
+<footer class="bss-wizard-footer">
+  <button type="submit">
+    <i class="fas fa-check"></i>
+    {{#if isConvert}}{{localize "S187BSS.Wizard.ConvertSubmit"}}{{else}}{{localize "S187BSS.Wizard.CreateSubmit"}}{{/if}}
+  </button>
+</footer>
+
+</div>

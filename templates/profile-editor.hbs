@@ -1,0 +1,75 @@
+{{!-- HandlebarsApplicationMixin requires each part to render exactly one root
+      element, so everything below stays inside this wrapper. --}}
+<div class="bss-editor-body">
+
+<div class="bss-editor-intro">
+  <p>{{localize "S187BSS.Editor.Intro"}}</p>
+</div>
+
+<div class="bss-profile-list">
+  {{#each profiles as |profile index|}}
+  <fieldset class="bss-profile">
+    <legend>
+      <input type="text" name="profiles.{{index}}.label" value="{{profile.label}}"
+             placeholder="{{localize 'S187BSS.Editor.LabelPlaceholder'}}">
+      <button type="button" class="bss-delete" data-action="deleteProfile" data-index="{{index}}"
+              data-tooltip="{{localize 'S187BSS.Editor.Delete'}}">
+        <i class="fas fa-trash"></i>
+      </button>
+    </legend>
+
+    <input type="hidden" name="profiles.{{index}}.id" value="{{profile.id}}">
+
+    <div class="form-group">
+      <label>{{localize "S187BSS.Editor.Mode"}}</label>
+      <div class="form-fields">
+        <select name="profiles.{{index}}.mode">
+          <option value="auto" {{#if profile.isAuto}}selected{{/if}}>{{localize "S187BSS.Editor.ModeAuto"}}</option>
+          <option value="fixed" {{#unless profile.isAuto}}selected{{/unless}}>{{localize "S187BSS.Editor.ModeFixed"}}</option>
+        </select>
+      </div>
+      <p class="hint">{{localize "S187BSS.Editor.ModeHint" baseline=../baseline}}</p>
+    </div>
+
+    <div class="form-group">
+      <label>{{localize "S187BSS.Editor.Multiplier"}}</label>
+      <div class="form-fields">
+        <input type="number" step="0.1" min="0.1" name="profiles.{{index}}.multiplier" value="{{profile.multiplier}}">
+      </div>
+      <p class="hint">{{localize "S187BSS.Editor.MultiplierHint"}}</p>
+    </div>
+
+    <div class="form-group bss-categories">
+      <label>{{localize "S187BSS.Editor.Categories"}}</label>
+      <div class="form-fields bss-category-grid">
+        {{#each ../categories as |category|}}
+        <label class="checkbox {{#unless category.supported}}bss-unsupported{{/unless}}"
+               {{#unless category.supported}}data-tooltip="{{localize 'S187BSS.Editor.NotYetImplemented'}}"{{/unless}}>
+          <input type="checkbox" name="profiles.{{index}}.categories.{{category.key}}"
+                 {{#if (lookup profile.categories category.key)}}checked{{/if}}
+                 {{#unless category.supported}}disabled{{/unless}}>
+          {{category.label}}
+          {{#unless category.supported}}<em>{{localize "S187BSS.Editor.Pending"}}</em>{{/unless}}
+        </label>
+        {{/each}}
+      </div>
+    </div>
+  </fieldset>
+  {{else}}
+  <p class="bss-empty">{{localize "S187BSS.Editor.Empty"}}</p>
+  {{/each}}
+</div>
+
+<footer class="bss-editor-footer">
+  <button type="button" data-action="addProfile">
+    <i class="fas fa-plus"></i> {{localize "S187BSS.Editor.Add"}}
+  </button>
+  <button type="button" data-action="resetDefaults">
+    <i class="fas fa-rotate-left"></i> {{localize "S187BSS.Editor.Reset"}}
+  </button>
+  <button type="submit">
+    <i class="fas fa-save"></i> {{localize "S187BSS.Editor.Save"}}
+  </button>
+</footer>
+
+</div>
