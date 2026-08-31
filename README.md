@@ -161,26 +161,9 @@ non-destructive — values are recomputed in memory on every prepare and never
 written back to the database. Unlike actor-derived data, a TokenDocument knows
 which scene it belongs to, so tokens on other scenes are never mis-scaled.
 
-## Building a local release
-
-```powershell
-.\build.ps1              # build at the current version
-.\build.ps1 -Version 0.2.0   # stamp a new version, then build
-```
-
-Produces `dist\scorpious187s-battle-scene-scaling-v<version>.zip` with
-`module.json` at the archive root, plus a loose `module.json` for manifest
-installs. Unzip on the server into:
-
-```
-<FoundryData>\Data\modules\scorpious187s-battle-scene-scaling\
-```
-
 ## Notes
 
-- `scorpious187s-lib` is **optional**. The module uses the family logger when the
-  library is present and falls back to its own when it is not, so the test server
-  does not need it.
+- `scorpious187s-lib` is **required**.
 - No actor or item data is ever modified. Scale is resolved per scene at the
   moment it is needed, so uninstalling leaves nothing behind in the world.
 - v14 is explicitly out of scope for now; `compatibility.verified` is pinned to 13.
