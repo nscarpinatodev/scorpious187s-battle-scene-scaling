@@ -28,6 +28,16 @@
           "verified": "5.2.5"
         }
       }
+    ],
+    "requires": [
+      {
+        "id": "scorpious187s-lib",
+        "type": "module",
+        "manifest": "https://github.com/nscarpinatodev/scorpious187s-lib/releases/latest/download/module.json",
+        "compatibility": {
+          "minimum": "0.3.0"
+        }
+      }
     ]
   },
   "authors": [
@@ -36,8 +46,12 @@
       "discord": "scorpious187"
     }
   ],
-  "esmodules": ["scripts/main.js"],
-  "styles": ["styles/battle-scene-scaling.css"],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/battle-scene-scaling.css"
+  ],
   "languages": [
     {
       "lang": "en",
