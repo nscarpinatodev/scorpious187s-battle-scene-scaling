@@ -1,0 +1,66 @@
+name: Release
+
+# Publish a Foundry-installable release whenever a version tag is pushed:
+#   git tag v0.3.2 && git push origin v0.3.2
+#
+# The tag is the single source of truth: module.json's version and URLs are
+# stamped from it here, so a release can never disagree with its tag. This is
+# the CI counterpart of build.ps1, which does the same for local test builds.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Derive version and URLs from the tag
+        id: meta
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "manifest=https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/module.json" >> "$GITHUB_OUTPUT"
+          echo "download=https://github.com/${GITHUB_REPOSITORY}/releases/download/${tag}/module.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp module.json
+        run: |
+          tmp="$(mktemp)"
+          jq --arg v "${{ steps.meta.outputs.version }}" \
+             --arg m "${{ steps.meta.outputs.manifest }}" \
+             --arg d "${{ steps.meta.outputs.download }}" \
+             '.version = $v | .manifest = $m | .download = $d' module.json > "$tmp"
+          mv "$tmp" module.json
+          echo "----- module.json -----"; cat module.json
+
+      # Same gate build.ps1 applies locally: a manifest Foundry cannot parse or
+      # a template it cannot render must not reach a release.
+      - name: Pre-flight checks
+        run: node tools/check.mjs
+
+      - name: Build module.zip
+        run: |
+          # The paths build.ps1 stages. Anything else (build.ps1, tools, .github)
+          # stays out of the archive by construction.
+          zip -r module.zip module.json scripts styles templates lang README.md
+          echo "----- archive -----"; unzip -Z1 module.zip
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          files: |
+            module.json
+            module.zip
+          fail_on_unmatched_files: true
